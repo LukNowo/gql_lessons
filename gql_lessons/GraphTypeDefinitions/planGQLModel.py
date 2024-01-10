@@ -52,12 +52,14 @@ class PlanGQLModel:
     
     @strawberryA.field(description="""planned lessons""")
     async def lessons(self, info: strawberryA.types.Info) -> List["PlannedLessonGQLModel"]:
+        from .plannedLessonGQLModel import PlannedLessonGQLModel
         loader = getLoaders(info).plans
         result = await loader.filter_by(plan_id=self.id)
         return result
     
     @strawberryA.field(description="""acredited semester""")
     async def semester(self, info: strawberryA.types.Info) -> Union["AcSemesterGQLModel", None]:
+        from .acSemesterGQLModel import AcSemesterGQLModel
         result = await AcSemesterGQLModel.resolve_reference(id=self.semester_id)
         return result
 
