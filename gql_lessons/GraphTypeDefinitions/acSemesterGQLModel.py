@@ -23,10 +23,12 @@ class AcSemesterGQLModel:
 
     @classmethod
     async def resolve_reference(cls, id: strawberryA.ID):
+    
         return AcSemesterGQLModel(id=id)
     
     @strawberryA.field(description="""Plans""")
     async def plans(self, info: strawberryA.types.Info) -> List["PlanGQLModel"]:
+        from .planGQLModel import PlanGQLModel
         loader = getLoaders(info).psps
         result = await loader.filter_by(semester_id=self.id)
         return result

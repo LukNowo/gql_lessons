@@ -7,7 +7,6 @@ import datetime
 
 AcLessonTypeGQLModel = Annotated["AcLessonTypeGQLModel",strawberryA.lazy(".acLessonTypeGQLModel")]
 AcSemesterGQLModel= Annotated["AcSemesterGQLModel",strawberryA.lazy(".acSemesterGQLModel")]
-PlannedLessonGQLModel = Annotated["PlannedLessonGQLModel",strawberryA.lazy(".plannedLessonGQLModel")]
 AcTopicGQLModel = Annotated["AcTopicGQLModel",strawberryA.lazy(".acTopicGQLModel")]
 EventGQLModel = Annotated["EventGQLModel",strawberryA.lazy(".eventGQLModel")]
 FacilityGQLModel = Annotated["FacilityGQLModel",strawberryA.lazy(".facilityGQLModel")]
@@ -74,6 +73,7 @@ class PlannedLessonGQLModel:
 
     @strawberryA.field(description="""type of lesson (lecture, ...)""")
     async def type(self, info) -> Optional["AcLessonTypeGQLModel"]:
+        from .acLessonTypeGQLModel import AcLessonTypeGQLModel
         result = await AcLessonTypeGQLModel.resolve_reference(id=self.lessontype_id)
         return result
 
@@ -104,12 +104,14 @@ class PlannedLessonGQLModel:
 
     @strawberryA.field(description="""teachers""")
     async def users(self, info: strawberryA.types.Info) -> List["UserGQLModel"]:
+        from .userGQLModel import UserGQLModel
         loader = getLoaders(info).userplans
         result = await loader.filter_by(planlesson_id=self.id)
         return [UserGQLModel(id=item.user_id) for item in result]
 
     @strawberryA.field(description="""study groups""")
     async def groups(self, info: strawberryA.types.Info) -> List["GroupGQLModel"]:
+        from .groupGQLModel import GroupGQLModel
         loader = getLoaders(info).groupplans
         result = await loader.filter_by(planlesson_id=self.id)
         return [GroupGQLModel(id=item.group_id) for item in result]
@@ -118,12 +120,14 @@ class PlannedLessonGQLModel:
     async def facilities(
         self, info: strawberryA.types.Info
     ) -> List["FacilityGQLModel"]:
+        from .facilityGQLModel import FacilityGQLModel
         loader = getLoaders(info).facilityplans
         result = await loader.filter_by(planlesson_id=self.id)
         return [FacilityGQLModel(id=item.facility_id) for item in result]
 
     @strawberryA.field(description="""linked event""")
     async def event(self, info: strawberryA.types.Info) -> Union["EventGQLModel", None]:
+        from .eventGQLModel import EventGQLModel
         if self.event_id is None:
             result = None
         else:
@@ -134,6 +138,7 @@ class PlannedLessonGQLModel:
     async def topic(
         self, info: strawberryA.types.Info
     ) -> Union["AcTopicGQLModel", None]:
+        from .acTopicGQLModel import AcTopicGQLModel
         if self.topic_id is None:
             result = None
         else:
@@ -146,6 +151,7 @@ class PlannedLessonGQLModel:
     async def semester(
         self, info: strawberryA.types.Info
     ) -> Union["AcSemesterGQLModel", None]:
+        from .acSemesterGQLModel import AcSemesterGQLModel
         if self.semester_id is None:
             result = None
         else:
@@ -158,6 +164,7 @@ class PlannedLessonGQLModel:
     async def plan(
         self, info: strawberryA.types.Info
     ) -> Union["PlanGQLModel", None]:
+        from .planGQLModel import PlanGQLModel
         print("PlannedLessonGQLModel.plan", self.plan_id)
         result = await PlanGQLModel.resolve_reference(info, self.plan_id)
         print("PlannedLessonGQLModel.plan", result)
