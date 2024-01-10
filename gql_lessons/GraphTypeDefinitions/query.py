@@ -3,12 +3,12 @@ import strawberry
 @strawberry.type(description="""Type for query root""")
 class Query: 
     
-    from .planGQLModel import plan_by_id
+    from .planGQLModel import (
+        plan_by_id,
+        plan_page
+        )
     
     plan_by_id = plan_by_id     
-   
-    from .planGQLModel import plan_page
-    
     plan_page = plan_page     
     
     from .plannedLessonGQLModel import planned_lesson_by_id

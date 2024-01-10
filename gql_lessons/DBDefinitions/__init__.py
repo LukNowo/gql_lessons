@@ -19,13 +19,11 @@ import uuid
 
 
 from .FacilityPlanModel import FacilityPlanModel
-
 from .GroupPlanModel import GroupPlanModel
 from .PlanModel import PlanModel
 from .PlannedLessonModel import PlannedLessonModel
 from .UserPlanModel import UserPlanModel
 from .UUID import UUIDColumn, UUIDFKey
-
 from .BaseModel import BaseModel
 
 def newUuidAsString():
