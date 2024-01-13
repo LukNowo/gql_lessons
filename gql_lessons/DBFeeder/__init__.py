@@ -8,6 +8,7 @@ from gql_lessons.DBDefinitions import (
     FacilityPlanModel
 )
 
+import uuid
 import random
 import itertools
 from functools import cache
@@ -29,6 +30,10 @@ def singleCall(asyncFunc):
 
     return result
 
+
+
+def generate_random_uuid():
+    return str(uuid.uuid4())
 
 ###########################################################################################################################
 #
