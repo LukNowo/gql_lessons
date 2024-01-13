@@ -3,6 +3,7 @@ from unittest import result
 import strawberry as strawberryA
 from contextlib import asynccontextmanager
 import datetime
+import uuid
 
 AcSemesterGQLModel= Annotated["AcSemesterGQLModel",strawberryA.lazy(".acSemesterGQLModel")]
 PlannedLessonGQLModel = Annotated["PlannedLessonGQLModel",strawberryA.lazy(".plannedLessonGQLModel")]
@@ -35,7 +36,7 @@ def getLoaders(info):
 )
 class PlanGQLModel:
     @classmethod
-    async def resolve_reference(cls, info: strawberryA.types.Info, id: strawberryA.ID):
+    async def resolve_reference(cls, info: strawberryA.types.Info, id: uuid.UUID):
         loader = getLoaders(info).psps
         result = await loader.load(id)
         if result is not None:
@@ -43,7 +44,7 @@ class PlanGQLModel:
         return result
 
     @strawberryA.field(description="""primary key""")
-    def id(self) -> strawberryA.ID:
+    def id(self) -> uuid.UUID:
         return self.id
 
     @strawberryA.field(description="""Timestap""")
@@ -78,14 +79,14 @@ from gql_lessons.GraphResolvers import (
 
 @strawberryA.field(description="""just a check""")
 async def say_hello(
-    self, info: strawberryA.types.Info, id: strawberryA.ID
+    self, info: strawberryA.types.Info, id: uuid.UUID
 ) -> Union[str, None]:
     result = f"Hello {id}"
     return result
 
 @strawberryA.field(description="""Planned lesson by its id""")
 async def plan_by_id(
-    self, info: strawberryA.types.Info, id: strawberryA.ID
+    self, info: strawberryA.types.Info, id: uuid.UUID
 ) -> Union[PlanGQLModel, None]:
     result = await PlanGQLModel.resolve_reference(info, id)
     return result
