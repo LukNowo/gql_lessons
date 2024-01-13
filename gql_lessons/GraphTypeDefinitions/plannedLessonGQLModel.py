@@ -47,7 +47,7 @@ class PlannedLessonGQLModel:
     async def resolve_reference(cls, info: strawberryA.types.Info, id: uuid.UUID):  # Use uuid.UUID
         # Make sure to convert id to string if necessary when using in queries
         loader = getLoaders(info).plans
-        result = await loader.load(str(id))  # Convert UUID to string
+        result = await loader.load(id)  # Convert UUID to string
         if result is not None:
             result._type_definition = cls._type_definition
         return result
@@ -97,9 +97,9 @@ class PlannedLessonGQLModel:
         self, info: strawberryA.types.Info
     ) -> List["PlannedLessonGQLModel"]:
         loader = getLoaders(info).plans
-        result1 = await loader.load(str(self.id))
+        result1 = await loader.load(self.id)
         if self.linkedlesson_id is not None:
-            result2 = await loader.filter_by(linkedlesson_id=str(self.id))
+            result2 = await loader.filter_by(linkedlesson_id=self.id)
             result1 = [result1, *result2]
         return result1
 
@@ -107,14 +107,14 @@ class PlannedLessonGQLModel:
     async def users(self, info: strawberryA.types.Info) -> List["UserGQLModel"]:
         from .userGQLModel import UserGQLModel
         loader = getLoaders(info).userplans
-        result = await loader.filter_by(planlesson_id=str(self.id))
+        result = await loader.filter_by(planlesson_id=self.id)
         return [UserGQLModel(id=item.user_id) for item in result]
 
     @strawberryA.field(description="""study groups""")
     async def groups(self, info: strawberryA.types.Info) -> List["GroupGQLModel"]:
         from .groupGQLModel import GroupGQLModel
         loader = getLoaders(info).groupplans
-        result = await loader.filter_by(planlesson_id=str(self.id))
+        result = await loader.filter_by(planlesson_id=self.id)
         return [GroupGQLModel(id=item.group_id) for item in result]
 
     @strawberryA.field(description="""facilities""")
@@ -123,7 +123,7 @@ class PlannedLessonGQLModel:
     ) -> List["FacilityGQLModel"]:
         from .facilityGQLModel import FacilityGQLModel
         loader = getLoaders(info).facilityplans
-        result = await loader.filter_by(planlesson_id=str(self.id))
+        result = await loader.filter_by(planlesson_id=self.id)
         return [FacilityGQLModel(id=item.facility_id) for item in result]
 
     @strawberryA.field(description="""linked event""")
@@ -191,7 +191,7 @@ async def planned_lesson_by_id(
     self, info: strawberryA.types.Info, id: uuid.UUID  # Changed to uuid.UUID
 ) -> Union[PlannedLessonGQLModel, None]:
     async with withInfo(info) as session:
-        result = await resolvePlannedLessonById(session, str(id))  # Convert UUID to string
+        result = await resolvePlannedLessonById(session,id)  # Convert UUID to string
         return result
 
 @strawberryA.field(description="""Planned lesson paged""")
