@@ -450,17 +450,6 @@ async def planned_lesson_insert(self, info: strawberryA.types.Info, lesson: Plan
     result.id = row.id
     return result
 
-#planned_lesson_remove R operace
-@strawberryA.mutation(description="Removes planned lesson - R operation")
-async def planned_lesson_remove(self, info: strawberryA.types.Info, lesson: PlannedLessonDeleteGQLModel) -> PlanResultGQLModel:
-    asyncSessionMaker = asyncSessionMakerFromInfo(info)
-    await resolveRemovePlan(asyncSessionMaker, lesson.id)
-    result = PlanResultGQLModel()
-    result.msg = "ok"
-    result.id = lesson.plan_id
-        
-    return result
-
 #planned_lesson_update U operace
 @strawberryA.mutation(description="Updates planned lesson - U operation")
 async def planned_lesson_update(self, info: strawberryA.types.Info, lesson: PlannedLessonUpdateGQLModel) -> PlannedLessonResultGQLModel:
@@ -475,6 +464,16 @@ async def planned_lesson_update(self, info: strawberryA.types.Info, lesson: Plan
         
     return result
 
+#planned_lesson_remove D operace
+@strawberryA.mutation(description="Removes planned lesson - D operation")
+async def planned_lesson_remove(self, info: strawberryA.types.Info, lesson: PlannedLessonDeleteGQLModel) -> PlanResultGQLModel:
+    asyncSessionMaker = asyncSessionMakerFromInfo(info)
+    await resolveRemovePlan(asyncSessionMaker, lesson.id)
+    result = PlanResultGQLModel()
+    result.msg = "ok"
+    result.id = lesson.plan_id
+        
+    return result
 
     
 ###########################################################################################################################
