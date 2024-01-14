@@ -1,5 +1,6 @@
 from typing import List
 import strawberry as strawberryA
+import uuid
 
 def getLoaders(info):
     return info.context['all']
@@ -17,8 +18,8 @@ def getLoaders(info):
 @strawberryA.federation.type(extend=True, keys=["id"])
 class AcTopicGQLModel:
 
-    id: strawberryA.ID = strawberryA.federation.field(external=True)
+    id: uuid.UUID = strawberryA.federation.field(external=True)
 
     @classmethod
-    async def resolve_reference(cls, id: strawberryA.ID):
+    async def resolve_reference(cls, id: uuid.UUID):
         return AcTopicGQLModel(id=id)

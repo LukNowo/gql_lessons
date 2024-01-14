@@ -1,7 +1,7 @@
 from typing import List, Annotated
 import asyncio
 import strawberry as strawberryA
-
+import uuid
 
 PlannedLessonGQLModel = Annotated["PlannedLessonGQLModel",strawberryA.lazy(".plannedLessonGQLModel")]
 
@@ -21,10 +21,10 @@ def getLoaders(info):
 
 @strawberryA.federation.type(extend=True, keys=["id"])
 class FacilityGQLModel:
-    id: strawberryA.ID = strawberryA.federation.field(external=True)
+    id: uuid.UUID = strawberryA.federation.field(external=True)
 
     @classmethod
-    async def resolve_reference(cls, id: strawberryA.ID):
+    async def resolve_reference(cls, id: uuid.UUID):
         return FacilityGQLModel(id=id)
 
     @strawberryA.field(description="""planned items""")

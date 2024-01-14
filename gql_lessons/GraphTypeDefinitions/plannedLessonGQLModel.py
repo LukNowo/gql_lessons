@@ -2,6 +2,7 @@ from typing import List, Union, Optional, Annotated, Optional
 import strawberry as strawberryA
 from contextlib import asynccontextmanager
 import datetime
+import uuid
 
 
 
@@ -43,16 +44,16 @@ def getLoaders(info):
 )
 class PlannedLessonGQLModel:
     @classmethod
-    async def resolve_reference(cls, info: strawberryA.types.Info, id: strawberryA.ID):
-        # print("PlannedLessonGQLModel.resolve_reference", id)
+    async def resolve_reference(cls, info: strawberryA.types.Info, id: uuid.UUID):  # Use uuid.UUID
+        # Make sure to convert id to string if necessary when using in queries
         loader = getLoaders(info).plans
-        result = await loader.load(id)
+        result = await loader.load(id)  # Convert UUID to string
         if result is not None:
-            result._type_definition = cls._type_definition  # little hack :)
+            result._type_definition = cls._type_definition
         return result
 
-    @strawberryA.field(description="""primary key""")
-    def id(self) -> strawberryA.ID:
+    @strawberryA.field(description="""Primary key""")
+    def id(self) -> uuid.UUID:
         return self.id
 
     @strawberryA.field(description="""Timestap""")
@@ -187,10 +188,10 @@ from gql_lessons.GraphResolvers import (
 
 @strawberryA.field(description="""Planned lesson by its id""")
 async def planned_lesson_by_id(
-    self, info: strawberryA.types.Info, id: strawberryA.ID
+    self, info: strawberryA.types.Info, id: uuid.UUID  # Changed to uuid.UUID
 ) -> Union[PlannedLessonGQLModel, None]:
     async with withInfo(info) as session:
-        result = await resolvePlannedLessonById(session, id)
+        result = await resolvePlannedLessonById(session,id)  # Convert UUID to string
         return result
 
 @strawberryA.field(description="""Planned lesson paged""")
@@ -203,26 +204,26 @@ async def planned_lesson_page(
 
 @strawberryA.field(description="""Planned lesson by its semester (subject)""")
 async def planned_lessons_by_semester(
-    self, info: strawberryA.types.Info, id: strawberryA.ID
+    self, info: strawberryA.types.Info, id: uuid.UUID  # Changed to uuid.UUID
 ) -> List[PlannedLessonGQLModel]:
     async with withInfo(info) as session:
-        result = await resolvePlannedLessonBySemester(session, id)
+        result = await resolvePlannedLessonBySemester(session, id)  # Convert UUID to string
         return result
 
 @strawberryA.field(description="""Planned lesson by its topic""")
 async def planned_lessons_by_topic(
-    self, info: strawberryA.types.Info, id: strawberryA.ID
+    self, info: strawberryA.types.Info, id: uuid.UUID  # Changed to uuid.UUID
 ) -> List[PlannedLessonGQLModel]:
     async with withInfo(info) as session:
-        result = await resolvePlannedLessonByTopic(session, id)
+        result = await resolvePlannedLessonByTopic(session, id)  # Convert UUID to string
         return result
 
-@strawberryA.field(description="""Planned lesson """)
+@strawberryA.field(description="""Planned lesson by its event""")
 async def planned_lessons_by_event(
-    self, info: strawberryA.types.Info, id: strawberryA.ID
+    self, info: strawberryA.types.Info, id: uuid.UUID  # Changed to uuid.UUID
 ) -> List[PlannedLessonGQLModel]:
     async with withInfo(info) as session:
-        result = await resolvePlannedLessonByEvent(session, id)
+        result = await resolvePlannedLessonByEvent(session, id)  # Convert UUID to string
         return result
         
 ###########################################################################################################################
@@ -238,36 +239,37 @@ from typing import Optional
 @strawberryA.input
 class PlannedLessonInsertGQLModel:
     name: str = strawberryA.field(default=None, description="Name of lesson aka 'Introduction'")
-    plan_id: strawberryA.ID = strawberryA.field(default=None, description="which plan contains this lesson")
+    plan_id: uuid.UUID = strawberryA.field(default=None, description="which plan contains this lesson")
     length: Optional[int] = strawberryA.field(default=2, description="how many 45min intervals")
     startproposal: Optional[datetime.datetime] = strawberryA.field(default=None, description="proposal of datetime")
     order: Optional[int] = strawberryA.field(default=1, description="order of the item in plan")
 
-    linkedlesson_id: Optional[strawberryA.ID] =  strawberryA.field(default=None, description="id of lesson from other plan which would be teached with")
-    topic_id: Optional[strawberryA.ID] = None
-    lessontype_id: Optional[strawberryA.ID] = strawberryA.field(default=None, description="aka Consultation, Laboratory, ...")
-    semester_id: Optional[strawberryA.ID] = strawberryA.field(default=None, description="link to semester (subject) from accreditation")
-    event_id: Optional[strawberryA.ID] = strawberryA.field(default=None, description="event defining when this would be teached")
-    id: Optional[strawberryA.ID]  = strawberryA.field(default=None, description="could be primary key generated by client, UUID is expected")
+    plan_id: uuid.UUID = strawberryA.field(default=None, description="which plan contains this lesson")  # Changed to uuid.UUID
+    linkedlesson_id: Optional[uuid.UUID] = strawberryA.field(default=None, description="id of lesson from other plan which would be teached with")  # Changed to uuid.UUID
+    topic_id: Optional[uuid.UUID] = None  # Changed to uuid.UUID
+    lessontype_id: Optional[uuid.UUID] = strawberryA.field(default=None, description="aka Consultation, Laboratory, ...")  # Changed to uuid.UUID
+    semester_id: Optional[uuid.UUID] = strawberryA.field(default=None, description="link to semester (subject) from accreditation")  # Changed to uuid.UUID
+    event_id: Optional[uuid.UUID] = strawberryA.field(default=None, description="event defining when this would be teached")  # Changed to uuid.UUID
+    id: Optional[uuid.UUID]  = strawberryA.field(default=None, description="could be primary key generated by client, UUID is expected")  # Changed to uuid.UUID
 
 @strawberryA.input
 class PlannedLessonUpdateGQLModel:
     lastchange: datetime.datetime = strawberryA.field(default=None, description="time stamp")
-    id: strawberryA.ID = strawberryA.field(default=None, description="primary key value")
+    id: uuid.UUID = strawberryA.field(default=None, description="primary key value")
     order: Optional[int] = None
     name: Optional[str] = None
     length: Optional[int] = None
     startproposal: Optional[datetime.datetime] = None
 
-    linkedlesson_id: Optional[strawberryA.ID] = None
-    topic_id: Optional[strawberryA.ID] = None
-    lessontype_id: Optional[strawberryA.ID] = None
-    semester_id: Optional[strawberryA.ID] = None
-    event_id: Optional[strawberryA.ID] = None
+    linkedlesson_id: Optional[uuid.UUID] = None
+    topic_id: Optional[uuid.UUID] = None
+    lessontype_id: Optional[uuid.UUID] = None
+    semester_id: Optional[uuid.UUID] = None
+    event_id: Optional[uuid.UUID] = None
 
 @strawberryA.type
 class PlannedLessonResultGQLModel:
-    id: Union[strawberryA.ID, None] = None
+    id: Union[uuid.UUID, None] = None
     msg: str = None
 
     @strawberryA.field(description="""Result of lesson operation""")
@@ -278,14 +280,14 @@ class PlannedLessonResultGQLModel:
     
 @strawberryA.type
 class PlanResultGQLModel:
-    id: Union[strawberryA.ID, None] = None
+    id: Union[uuid.UUID, None] = None
     msg: str = None
 
 @strawberryA.input
 class PlannedLessonDeleteGQLModel:
     lastchange: datetime.datetime
-    id: strawberryA.ID
-    plan_id: Optional[strawberryA.ID] = None
+    id: uuid.UUID
+    plan_id: Optional[uuid.UUID] = None
 
    # @strawberryA.field(description="""Result of lesson operation""")
    # async def plan(self, info: strawberryA.types.Info) -> Union[PlanGQLModel, None]:
@@ -294,45 +296,45 @@ class PlannedLessonDeleteGQLModel:
     
 @strawberryA.input
 class PlannedLessonUserInsertGQLModel:
-    user_id: strawberryA.ID
-    planlesson_id: strawberryA.ID
+    user_id: uuid.UUID
+    planlesson_id: uuid.UUID
     
 @strawberryA.input
 class PlannedLessonUserDeleteGQLModel:
-    user_id: strawberryA.ID
-    planlesson_id: strawberryA.ID
+    user_id: uuid.UUID
+    planlesson_id: uuid.UUID
 
 @strawberryA.input
 class PlannedLessonGroupInsertGQLModel:
-    group_id: strawberryA.ID
-    planlesson_id: strawberryA.ID
+    group_id: uuid.UUID
+    planlesson_id: uuid.UUID
     
 @strawberryA.input
 class PlannedLessonGroupDeleteGQLModel:
-    group_id: strawberryA.ID
-    planlesson_id: strawberryA.ID
+    group_id: uuid.UUID
+    planlesson_id: uuid.UUID
 
 @strawberryA.input
 class PlannedLessonFacilityInsertGQLModel:
-    facility_id: strawberryA.ID
-    planlesson_id: strawberryA.ID
+    facility_id: uuid.UUID
+    planlesson_id: uuid.UUID
     
 @strawberryA.input
 class PlannedLessonFacilityDeleteGQLModel:
-    facility_id: strawberryA.ID
-    planlesson_id: strawberryA.ID
+    facility_id: uuid.UUID
+    planlesson_id: uuid.UUID
 
 @strawberryA.input
 class PlannedLessonAssignmentGQLModel:
     lastchange: datetime.datetime
-    id: strawberryA.ID
-    users: Optional[List[strawberryA.ID]] = None
-    facilities: Optional[List[strawberryA.ID]] = None
-    groups: Optional[List[strawberryA.ID]] = None
+    id: uuid.UUID
+    users: Optional[List[uuid.UUID]] = None
+    facilities: Optional[List[uuid.UUID]] = None
+    groups: Optional[List[uuid.UUID]] = None
     
 @strawberryA.type
 class PlannedLessonAssignmentResultGQLModel:
-    id: strawberryA.ID = None
+    id: uuid.UUID = None
     msg: str = None
 
     @strawberryA.field(description="""Result of user operation""")

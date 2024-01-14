@@ -2,7 +2,7 @@ from typing import List, Annotated
 import asyncio
 from unittest import result
 import strawberry as strawberryA
-
+import uuid
 
 from typing import Optional
 
@@ -26,10 +26,10 @@ def getLoaders(info):
 @strawberryA.federation.type(extend=True, keys=["id"])
 class GroupGQLModel:
 
-    id: strawberryA.ID = strawberryA.federation.field(external=True)
+    id: uuid.UUID = strawberryA.federation.field(external=True)
 
     @classmethod
-    async def resolve_reference(cls, id: strawberryA.ID):
+    async def resolve_reference(cls, id: uuid.UUID):
         return GroupGQLModel(id=id)
 
     @strawberryA.field(description="""planned items""")
