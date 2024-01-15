@@ -97,26 +97,17 @@ def getUserFromInfo(info):
     logging.debug("getUserFromInfo", user)
     return user
 
-def getAuthorizationToken(info):
-    context = info.context
-    request = context.get("request", None)
-    assert request is not None, "trying to get authtoken from None request"
 
 
-def createLoadersContext(asyncSessionMaker):
-    return {
-        "loaders": createLoaders(asyncSessionMaker)
-    }
-
-#async def createLoaders(asyncSessionMaker, models=dbmodels):
-#    def createLambda(loaderName, DBModel):
-#        return lambda self: createIdLoader(asyncSessionMaker, DBModel)
+async def createLoaders(asyncSessionMaker, models=dbmodels):
+    def createLambda(loaderName, DBModel):
+        return lambda self: createIdLoader(asyncSessionMaker, DBModel)
     
-#    attrs = {}
-#    for key, DBModel in models.items():
-#        attrs[key] = property(cache(createLambda(key, DBModel)))
-    
-#    Loaders = type('Loaders', (), attrs)   
-#    return Loaders()
+    attrs = {}
+    for key, DBModel in models.items():
+        attrs[key] = property(cache(createLambda(key, DBModel)))
+   
+    Loaders = type('Loaders', (), attrs)   
+    return Loaders()
 
 from functools import cache
