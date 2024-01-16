@@ -1,5 +1,13 @@
+from email.policy import default
 import sqlalchemy
 import datetime
+
+from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.ext.asyncio import create_async_engine
+from sqlalchemy.orm import relationship
 
 from sqlalchemy import (
     Column,
@@ -26,56 +34,6 @@ from .UserPlanModel import UserPlanModel
 from .UUID import UUIDColumn, UUIDFKey
 from .BaseModel import BaseModel
 
-def newUuidAsString():
-    return f"{uuid.uuid1()}"
-
-
-def UUIDColumn(name=None):
-    if name is None:
-        return Column(String, primary_key=True, unique=True, default=newUuidAsString)
-    else:
-        return Column(
-            name, String, primary_key=True, unique=True, default=newUuidAsString
-        )
-
-
-def UUIDFKey(*, ForeignKey=None, nullable=False):
-    if ForeignKey is None:
-        return Column(
-            String, index=True, nullable=nullable
-        )
-    else:
-        return Column(
-            ForeignKey, index=True, nullable=nullable
-        )
-
-# id = Column(UUID(as_uuid=True), primary_key=True, server_default=sqlalchemy.text("uuid_generate_v4()"),)
-
-###########################################################################################################################
-#
-# zde definujte sve SQLAlchemy modely
-# je-li treba, muzete definovat modely obsahujici jen id polozku, na ktere se budete odkazovat
-#
-###########################################################################################################################
-
-
-
-
-
-
-
-
-
-
-###########################################################
-
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.ext.asyncio import create_async_engine
-
-
 async def startEngine(connectionstring, makeDrop=False, makeUp=True):
     """Provede nezbytne ukony a vrati asynchronni SessionMaker"""
     asyncEngine = create_async_engine(connectionstring)
@@ -85,8 +43,13 @@ async def startEngine(connectionstring, makeDrop=False, makeUp=True):
             await conn.run_sync(BaseModel.metadata.drop_all)
             print("BaseModel.metadata.drop_all finished")
         if makeUp:
-            await conn.run_sync(BaseModel.metadata.create_all)
-            print("BaseModel.metadata.create_all finished")
+            try:
+                await conn.run_sync(BaseModel.metadata.create_all)
+                print("BaseModel.metadata.create_all finished")
+            except sqlalchemy.exc.NoReferencedTableError as e:
+                print(e)
+                print("Unable automaticaly create tables")
+                return None
 
     async_sessionMaker = sessionmaker(
         asyncEngine, expire_on_commit=False, class_=AsyncSession
