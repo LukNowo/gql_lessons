@@ -53,6 +53,12 @@ class Query:
     )
     
     
+        from .planGQLModel import (
+       plan_by_id,
+       plan_page
+
+    )
+    
     
 @strawberry.type(description="""Type for mutation root""")
 class Mutation:
