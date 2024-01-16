@@ -1,6 +1,6 @@
 from typing import List, Union, Optional
 import typing
-import strawberry as strawberryA
+import strawberry
 import uuid
 from contextlib import asynccontextmanager
 
@@ -30,31 +30,39 @@ def AsyncSessionFromInfo(info):
 
 def getLoaders(info):
     return info.context['all']
-###########################################################################################################################
-#
-# zde definujte sve GQL modely
-# - nove, kde mate zodpovednost
-# - rozsirene, ktere existuji nekde jinde a vy jim pridavate dalsi atributy
-#
-###########################################################################################################################
-#
-# priklad rozsireni UserGQLModel
-#    
-
-###########################################################################################################################
-#
-# zde definujte svuj Query model
-#
-###########################################################################################################################
-
-###########################################################################################################################
-#
-#
-# Mutations
-#
-#
-###########################################################################################################################
 
 
+from .acLessonTypeGQLModel import AcLessonTypeGQLModel
+from .acSemesterGQLModel import AcSemesterGQLModel
+from .acTopicGQLModel import AcTopicGQLModel
+from .eventGQLModel import EventGQLModel
+from .facilityGQLModel import FacilityGQLModel
+from .groupGQLModel import GroupGQLModel
+from .planGQLModel import PlanGQLModel
+from .plannedLessonGQLModel import PlannedLessonGQLModel
 
-schema = strawberryA.federation.Schema(query=Query, types=(UserGQLModel,), mutation=Mutation)
+
+@strawberry.type(description="""Type for query root""")
+class Query:
+        from .plannedLessonGQLModel import (
+       planned_lesson_by_id,
+       planned_lesson_page,
+       planned_lessons_by_event,
+       planned_lessons_by_semester,
+       planned_lessons_by_topic
+    )
+    
+    
+    
+@strawberry.type(description="""Type for mutation root""")
+class Mutation:
+    
+    from .plannedLessonGQLModel import (
+        planned_lesson_insert,
+        planned_lesson_update,
+        planned_lesson_remove
+        
+    )
+    
+
+schema = strawberry.federation.Schema(query=Query, types=(UserGQLModel,), mutation=Mutation)

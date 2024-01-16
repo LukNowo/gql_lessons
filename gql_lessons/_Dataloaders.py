@@ -103,7 +103,7 @@ class AuthorizationLoader(DataLoader):
         return results
 
 
-class Loaders:
+class Loaders:  
     plans = None
     plannedlessons = None
     userplans = None
