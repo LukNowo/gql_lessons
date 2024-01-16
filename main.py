@@ -53,6 +53,7 @@ async def initEngine(app: FastAPI):
     logging.info("engine started")
 
     from gql_lessons._DBFeeder import initDB
+    #from .gql_lessons.utiinitDBFeedereeder import initDB
     await initDB(asyncSessionMaker)
 
     logging.info("data (if any) imported")
@@ -68,7 +69,7 @@ async def get_context(request: Request):
         async with initEngine(app) as cntx:
             pass
         
-    from gql_lessons._Dataloaders import createLoadersContext, createUgConnectionContext
+    from gql_lessons.utils.Dataloaders import createLoadersContext, createUgConnectionContext
     context = createLoadersContext(appcontext["asyncSessionMaker"])
     i = Item(query = "")
     i.query = ""
