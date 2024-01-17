@@ -44,12 +44,19 @@ def getLoaders(info):
 )
 class PlannedLessonGQLModel:
     @classmethod
-    async def resolve_reference(cls, info: strawberryA.types.Info, id: uuid.UUID):  # Use uuid.UUID
-        # Make sure to convert id to string if necessary when using in queries
-        loader = getLoaders(info).plans
-        result = await loader.load(id)  # Convert UUID to string
-        if result is not None:
-            result._type_definition = cls._type_definition
+    async def resolve_reference(cls, info: strawberryA.types.Info, id: uuid.UUID):
+        result = None
+        if id is not None:
+            loader = getLoaders(info=info).plan_lessons
+            # print(loader, flush=True)
+            if isinstance(id, str):
+                id = uuid.UUID(id)
+            result = await loader.load(id)
+            if result is not None:
+                result._type_definition = cls._type_definition  # little hack :)
+                result.__strawberry_definition__ = (
+                    cls._type_definition
+                )  # some version of strawberry changed :(
         return result
 
     @strawberryA.field(description="""Primary key""")

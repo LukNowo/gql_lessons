@@ -18,8 +18,8 @@ class PlannedLessonModel(BaseModel):
     id = UUIDColumn()
     name = Column(String)
     order = Column(Integer, default=lambda:1)
-    length = Column(Integer)
-    startproposal = Column(DateTime)
+    length = Column(Integer, nullable=True)
+    startproposal = Column(DateTime, nullable=True)
     plan_id = Column(ForeignKey("plans.id"), index=True, nullable=True)
 
     linkedlesson_id = Column(ForeignKey("plan_lessons.id"), index=True, nullable=True)
