@@ -210,7 +210,7 @@ def createLoadersContext(asyncSessionMaker):
     }
 
 def createUgConnectionContext(request):
-    from gql_lessons._gql_ug_proxy import get_ug_connection
+    from utils.gql_ug_proxy import get_ug_connection
     connection = get_ug_connection(request=request)
     return {
         "ug_connection": connection

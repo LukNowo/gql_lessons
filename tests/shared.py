@@ -39,7 +39,9 @@ async def prepare_demodata(async_session_maker):
         async_session_maker,
         [
             PlanModel,
-            UserPlanModel, GroupPlanModel, PlannedLessonModel, 
+            UserPlanModel, 
+            GroupPlanModel, 
+            PlannedLessonModel, 
         ],
         data,
     )
