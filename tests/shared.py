@@ -3,14 +3,14 @@ import sys
 import asyncio
 
 # setting path
-#sys.path.append("../gql_lessons")
+sys.path.append("../gql_lessons")
 
 import pytest
 
 # from ..uoishelpers.uuid import UUIDColumn
 
 from gql_lessons.DBDefinitions import BaseModel
-from gql_lessons.DBDefinitions import UserPlanModel, GroupPlanModel, PlannedLessonModel, PlanModel
+from gql_lessons.DBDefinitions import UserPlanModel, GroupPlanModel, PlannedLessonModel, PlanModel, FacilityPlanModel
 
 async def prepare_in_memory_sqllite():
     from sqlalchemy.ext.asyncio import create_async_engine
@@ -28,7 +28,7 @@ async def prepare_in_memory_sqllite():
 
     return async_session_maker
 
-from gql_lessons.DBFeeder import get_demodata
+from gql_lessons.utils.DBFeeder import get_demodata
 
 async def prepare_demodata(async_session_maker):
     data = get_demodata()
@@ -38,16 +38,20 @@ async def prepare_demodata(async_session_maker):
     await ImportModels(
         async_session_maker,
         [
+<<<<<<< HEAD
             PlanModel,
             UserPlanModel, 
             GroupPlanModel, 
             PlannedLessonModel, 
+=======
+            PlanModel, FacilityPlanModel, UserPlanModel, GroupPlanModel, PlannedLessonModel, 
+>>>>>>> 25c22d60c8b622a9f27d1587284b686f8d90f857
         ],
         data,
     )
 
 
-from gql_lessons.Dataloaders import createLoaders
+from gql_lessons.utils.Dataloaders import createLoaders
 
 
 async def createContext(asyncSessionMaker):
