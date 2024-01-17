@@ -148,7 +148,7 @@ async def plan_update(self, info: strawberryA.types.Info, plan: PlanUpdateGQLMod
         return result
 
 @strawberryA.mutation(description="""Assigns the plan to the user. """)
-async def plan_assing_to(self, info: strawberryA.types.Info, plan_id: strawberryA.ID, user_id: strawberryA.ID) -> PlanResultGQLModel:
+async def plan_assign_to(self, info: strawberryA.types.Info, plan_id: strawberryA.ID, user_id: strawberryA.ID) -> PlanResultGQLModel:
         loader = getLoaders(info).questions
         questions = await loader.filter_by(plan_id=plan_id)
         loader = getLoaders(info).answers
