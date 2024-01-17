@@ -62,6 +62,7 @@ class Query:
     from .planGQLModel import (
         plan_by_id,
         plan_page
+
     )
     
     plan_by_id = plan_by_id     
@@ -82,6 +83,16 @@ class Mutation:
     planned_lesson_insert = planned_lesson_insert
     planned_lesson_remove = planned_lesson_remove
     planned_lesson_update = planned_lesson_update
+    from .planGQLModel import (
+        plan_insert,
+        plan_update,
+        plan_assign_to
+
+    )
+    
+    plan_insert = plan_insert
+    plan_update = plan_update
+    plan_assign_to = plan_assign_to
     
 
 schema = strawberry.federation.Schema(query=Query, types=(UserGQLModel,), mutation=Mutation)
