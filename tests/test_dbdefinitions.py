@@ -10,7 +10,7 @@ import pytest
 # from ..uoishelpers.uuid import UUIDColumn
 
 from gql_lessons.DBDefinitions import BaseModel
-from gql_lessons.DBDefinitions import UserPlanModel, GroupPlanModel, PlannedLessonModel
+from gql_lessons.DBDefinitions import UserPlanModel, GroupPlanModel, PlannedLessonModel, FacilityPlanModel
 
 from tests.shared import prepare_demodata, prepare_in_memory_sqllite, get_demodata
 
@@ -33,11 +33,11 @@ def test_connection_string():
     assert "@" in connectionString
 
 
-from gql_lessons.DBDefinitions import UUIDColumn
+from gql_lessons.DBDefinitions.UUID import UUIDColumn
 
 
 def test_connection_uuidcolumn():
-    col = UUIDColumn(name="name")
+    col = UUIDColumn()
 
     assert col is not None
 
