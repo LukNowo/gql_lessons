@@ -5,7 +5,7 @@ from contextlib import asynccontextmanager
 import datetime
 import uuid
 
-from .BaseGQLModel import BaseGQLModel
+from .baseGQLModel import BaseGQLModel
 from .plannedLessonGQLModel import PlannedLessonGQLModel
 
 
