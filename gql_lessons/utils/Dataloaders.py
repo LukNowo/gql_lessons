@@ -147,6 +147,10 @@ def createLoaders(asyncSessionMaker, models=dbmodels) -> Loaders:
         
     return Loaders()
 
+# def getLoaders(info)-> Loaders:
+#     context = info.context
+#     loaders = context["loaders"]
+#     return loaders
 
 def getLoadersFromInfo(info) -> Loaders:
     context = info.context
