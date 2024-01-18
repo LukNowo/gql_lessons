@@ -41,6 +41,12 @@ from .groupGQLModel import GroupGQLModel
 from .planGQLModel import PlanGQLModel
 from .plannedLessonGQLModel import PlannedLessonGQLModel
 
+from .planGQLModel import (
+        plan_insert,
+        plan_update,
+        plan_assign_to
+
+    )
 
 @strawberry.type(description="""Type for query root""")
 class Query:
@@ -83,16 +89,11 @@ class Mutation:
     planned_lesson_insert = planned_lesson_insert
     planned_lesson_remove = planned_lesson_remove
     planned_lesson_update = planned_lesson_update
-    from .planGQLModel import (
-        plan_insert,
-        plan_update,
-        plan_assign_to
-
-    )
     
-    plan_insert = plan_insert
-    plan_update = plan_update
-    plan_assign_to = plan_assign_to
+    
+    # plan_insert = plan_insert
+    # plan_update = plan_update
+    # plan_assign_to = plan_assign_to
     
 
 schema = strawberry.federation.Schema(query=Query, types=(UserGQLModel,), mutation=Mutation)
