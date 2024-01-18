@@ -5,9 +5,9 @@ from contextlib import asynccontextmanager
 import datetime
 import uuid
 
-from .baseGQLModel import BaseGQLModel
+from .BaseGQLModel import BaseGQLModel
 from .plannedLessonGQLModel import PlannedLessonGQLModel
-
+from gql_lessons.GraphResolvers import resolveRemovePlan
 
 
 @asynccontextmanager
@@ -29,8 +29,11 @@ def AsyncSessionFromInfo(info):
     )
     return info.context["session"]
 
-def getLoaders(info):
-    return info.context['all']
+from gql_lessons.utils.Dataloaders import Loaders
+def getLoaders(info)-> Loaders:
+    context = info.context
+    loaders = context["loaders"]
+    return loaders
 
 @strawberryA.federation.type(
     keys=["id"],
@@ -46,7 +49,7 @@ class PlanGQLModel:
     async def resolve_reference(cls, info: strawberryA.types.Info, id: uuid.UUID):
         result = None
         if id is not None:
-            loader = getLoaders(info=info).plan_lessons
+            loader = getLoaders(info=info).plans
             # print(loader, flush=True)
             if isinstance(id, str):
                 id = uuid.UUID(id)
@@ -98,6 +101,12 @@ class PlanResultGQLModel:
         result = await PlanGQLModel.resolve_reference(info, self.id)
         return result
     
+@strawberryA.input
+class PlanDeleteGQLModel:
+    lastchange: datetime.datetime
+    id: uuid.UUID
+    plan_id: Optional[uuid.UUID] = None
+    
 #############################################################
 #
 # Queries
@@ -128,40 +137,80 @@ async def plan_page(
 #
 ###########################################################################################################################
 
-@strawberryA.mutation(description="""Creates new plan""")
+#plan CRU operace
+#planned_insert C operace
+@strawberryA.mutation(description="Inserts plan - C operation")
 async def plan_insert(self, info: strawberryA.types.Info, plan: PlanInsertGQLModel) -> PlanResultGQLModel:
-        loader = getLoaders(info).plans
-        row = await loader.insert(plan)
-        result = PlanResultGQLModel(id=row.id, msg="ok")
-        return result
+    loader = getLoaders(info).plans
+    row = await loader.insert(plan)
+    result = PlanResultGQLModel()
+    result.msg = "ok"
+    result.id = row.id
+    return result
 
-@strawberryA.mutation(description="""Updates the plan""")
+#plan_update U operace
+@strawberryA.mutation(description="Updates plan - U operation")
 async def plan_update(self, info: strawberryA.types.Info, plan: PlanUpdateGQLModel) -> PlanResultGQLModel:
-    
-        loader = getLoaders(info).plans
-        row = await loader.update(plan)
-        result = PlanResultGQLModel()
-        result.msg = "ok"
-        result.id = plan.id
-        if row is None:
-            result.msg = "fail"           
-        return result
+    loader = getLoaders(info).plans
+    row = await loader.update(plan)
+    result = PlanResultGQLModel()
+    result.msg = "ok"
+    result.id = plan.id
+    if row is None:
+        result.msg = "fail"
+        
+    return result
 
-@strawberryA.mutation(description="""Assigns the plan to the user. """)
-async def plan_assign_to(self, info: strawberryA.types.Info, plan_id: strawberryA.ID, user_id: strawberryA.ID) -> PlanResultGQLModel:
-        loader = getLoaders(info).questions
-        questions = await loader.filter_by(plan_id=plan_id)
-        loader = getLoaders(info).answers
-        for q in questions:
-            exists = await loader.filter_by(question_id=q.id, user_id=user_id)
-            if next(exists, None) is None:
-                #user has not this particular question
-                rowa = await loader.insert(None, {"question_id": q.id, "user_id": user_id})
-        result = PlanResultGQLModel()
-        result.msg = "ok"
-        result.id = plan_id
+#plan_remove D operace
+@strawberryA.mutation(description="Removes plan - D operation")
+async def plan_remove(self, info: strawberryA.types.Info, plan: PlanDeleteGQLModel) -> PlanResultGQLModel:
+    asyncSessionMaker = asyncSessionMakerFromInfo(info)
+    await resolveRemovePlan(asyncSessionMaker, plan.id)
+    result = PlanResultGQLModel()
+    result.msg = "ok"
+    if plan.id is not None:
+        result.id = plan.id
+    else:
+        # Handle the case where plan.plan_id is None, maybe set a default value or raise an error
+        # result.id = SomeDefaultValue
+        pass
+        
+    return result
+
+# @strawberryA.mutation(description="""Creates new plan""")
+# async def plan_insert(self, info: strawberryA.types.Info, plan: PlanInsertGQLModel) -> PlanResultGQLModel:
+#         loader = getLoaders(info).plans
+#         row = await loader.insert(plan)
+#         result = PlanResultGQLModel(id=row.id, msg="ok")
+#         return result
+
+# @strawberryA.mutation(description="""Updates the plan""")
+# async def plan_update(self, info: strawberryA.types.Info, plan: PlanUpdateGQLModel) -> PlanResultGQLModel:
+    
+#         loader = getLoaders(info).plans
+#         row = await loader.update(plan)
+#         result = PlanResultGQLModel()
+#         result.msg = "ok"
+#         result.id = plan.id
+#         if row is None:
+#             result.msg = "fail"           
+#         return result
+
+# @strawberryA.mutation(description="""Assigns the plan to the user. """)
+# async def plan_assign_to(self, info: strawberryA.types.Info, plan_id: strawberryA.ID, user_id: strawberryA.ID) -> PlanResultGQLModel:
+#         loader = getLoaders(info).questions
+#         questions = await loader.filter_by(plan_id=plan_id)
+#         loader = getLoaders(info).answers
+#         for q in questions:
+#             exists = await loader.filter_by(question_id=q.id, user_id=user_id)
+#             if next(exists, None) is None:
+#                 #user has not this particular question
+#                 rowa = await loader.insert(None, {"question_id": q.id, "user_id": user_id})
+#         result = PlanResultGQLModel()
+#         result.msg = "ok"
+#         result.id = plan_id
             
-        return result
+#         return result
 
 
 # class PlanGQLModel:
@@ -192,7 +241,7 @@ async def plan_assign_to(self, info: strawberryA.types.Info, plan_id: strawberry
     # async def semester(self, info: strawberryA.types.Info) -> Union["AcSemesterGQLModel", None]:
     #     from .acSemesterGQLModel import AcSemesterGQLModel
     #     result = await AcSemesterGQLModel.resolve_reference(id=self.semester_id)
-        return result
+    #   return result
 
 # ###########################################################################################################################
 # #
