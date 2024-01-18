@@ -3,7 +3,6 @@ import strawberry as strawberryA
 from contextlib import asynccontextmanager
 import datetime
 import uuid
-from gql_lessons.utils.Dataloaders import Loaders 
 
 
 
@@ -36,11 +35,12 @@ def AsyncSessionFromInfo(info):
     )
     return info.context["session"]
 
+
+from gql_lessons.utils.Dataloaders import Loaders
 def getLoaders(info)-> Loaders:
     context = info.context
     loaders = context["loaders"]
     return loaders
-
 
 @strawberryA.federation.type(
     keys=["id"],
@@ -289,10 +289,12 @@ class PlannedLessonResultGQLModel:
         result = await PlannedLessonGQLModel.resolve_reference(info, self.id)
         return result
     
-@strawberryA.type
-class PlanResultGQLModel:
-    id: Union[uuid.UUID, None] = None
-    msg: str = None
+# @strawberryA.type
+# class PlanResultGQLModel:
+#     id: Union[uuid.UUID, None] = None
+#     msg: str = None
+
+from .planGQLModel import PlanResultGQLModel
 
 @strawberryA.input
 class PlannedLessonDeleteGQLModel:
@@ -464,7 +466,6 @@ async def planned_lesson_insert(self, info: strawberryA.types.Info, lesson: Plan
 #planned_lesson_update U operace
 @strawberryA.mutation(description="Updates planned lesson - U operation")
 async def planned_lesson_update(self, info: strawberryA.types.Info, lesson: PlannedLessonUpdateGQLModel) -> PlannedLessonResultGQLModel:
-    resolveRemovePlan
     loader = getLoaders(info).plans
     row = await loader.update(lesson)
     result = PlannedLessonResultGQLModel()
