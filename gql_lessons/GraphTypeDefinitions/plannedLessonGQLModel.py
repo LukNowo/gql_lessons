@@ -3,6 +3,7 @@ import strawberry as strawberryA
 from contextlib import asynccontextmanager
 import datetime
 import uuid
+from gql_lessons.utils.Dataloaders import Loaders 
 
 
 
@@ -35,8 +36,6 @@ def AsyncSessionFromInfo(info):
     )
     return info.context["session"]
 
-
-from gql_lessons.utils.Dataloaders import Loaders
 def getLoaders(info)-> Loaders:
     context = info.context
     loaders = context["loaders"]
