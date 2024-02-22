@@ -1,4 +1,4 @@
-from typing import List, Optional, Annotated
+from typing import List, Optional, Annotated, Union
 from unittest import result
 import strawberry as strawberryA
 from contextlib import asynccontextmanager
@@ -61,22 +61,22 @@ class PlanGQLModel:
                 )  # some version of strawberry changed :(
         return result
 
-    @strawberryA.field(description="""Primary key""")
+    @strawberryA.field(description="""Id""")
     def id(self) -> uuid.UUID:
         return self.id
 
-    @strawberryA.field(description="""Timestap""")
+    @strawberryA.field(description="""Last changed""")
     def lastchange(self) -> datetime.datetime:
         return self.lastchange
 
-    @strawberryA.field(description="""primary key""")
+    @strawberryA.field(description="""Name""")
     def name(self) -> str:
         return self.name
 
-    @strawberryA.field(description="""order""")
+    @strawberryA.field(description="""English name with order""")
     def name_en(self) -> str:
         return self.order
-
+    
 @strawberryA.input
 class PlanInsertGQLModel:
     name: Optional[str] = None

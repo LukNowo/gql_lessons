@@ -1,4 +1,5 @@
-from typing import List, Union, Optional
+from typing import List, Union, Optional, Annotated
+import strawberry as strawberryA
 import typing
 import strawberry
 import uuid
@@ -87,8 +88,18 @@ class Mutation:
     from .plannedLessonGQLModel import (
         planned_lesson_insert,
         planned_lesson_update,
-        planned_lesson_remove
-        
+        planned_lesson_remove,
+
+        planned_lesson_user_insert,
+        planned_lesson_user_delete,
+
+        planned_lesson_group_insert,
+        planned_lesson_group_delete,
+
+        planned_lesson_facility_insert,
+        planned_lesson_facility_delete,
+
+
     )
     planned_lesson_insert = planned_lesson_insert
     planned_lesson_remove = planned_lesson_remove
@@ -97,6 +108,15 @@ class Mutation:
     plan_insert = plan_insert
     plan_update = plan_update
     plan_remove = plan_remove
+
+    planned_lesson_user_insert = planned_lesson_user_insert
+    planned_lesson_user_delete = planned_lesson_user_delete
+
+    planned_lesson_group_insert = planned_lesson_group_insert
+    planned_lesson_group_delete = planned_lesson_group_delete
+
+    planned_lesson_facility_insert = planned_lesson_facility_insert
+    planned_lesson_facility_delete = planned_lesson_facility_delete
     
 
 schema = strawberry.federation.Schema(query=Query, types=(UserGQLModel,), mutation=Mutation)

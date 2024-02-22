@@ -3,16 +3,18 @@ import sys
 import asyncio
 
 # setting path
-#sys.path.append("../gql_lessons")
-
 import pytest
 
 # from ..uoishelpers.uuid import UUIDColumn
 
 from gql_lessons.DBDefinitions import BaseModel
-from gql_lessons.DBDefinitions import UserPlanModel, GroupPlanModel, PlannedLessonModel, FacilityPlanModel
+from gql_lessons.DBDefinitions import FacilityPlanModel
+from gql_lessons.DBDefinitions import GroupPlanModel
+from gql_lessons.DBDefinitions import PlanModel
+from gql_lessons.DBDefinitions import PlannedLessonModel
+from gql_lessons.DBDefinitions import UserPlanModel
 
-from tests.shared import prepare_demodata, prepare_in_memory_sqllite, get_demodata
+from .shared import prepare_demodata, prepare_in_memory_sqllite, get_demodata
 
 
 @pytest.mark.asyncio

@@ -19,10 +19,10 @@ from gql_lessons.DBDefinitions import (
 
 dbmodels = {
     "plans": PlanModel, 
-    "plannedlessons": PlannedLessonModel, 
-    "userplans": UserPlanModel,
-    "groupplans": GroupPlanModel, 
-    "facilityplans": FacilityPlanModel
+    "plan_lessons": PlannedLessonModel, 
+    "userplan_lessons": UserPlanModel,
+    "groupplan_lessons": GroupPlanModel, 
+    "facilityplan_lessons": FacilityPlanModel
 }
 
 
@@ -106,10 +106,10 @@ class AuthorizationLoader(DataLoader):
 class Loaders:
     authorizations = None
     plans = None
-    plannedlessons = None
-    userplans = None
-    groupplans = None
-    facilityplans = None
+    plan_lessons = None
+    userplan_lessons = None
+    groupplan_lessons = None
+    facilityplan_lessons = None
     pass
 
 def createLoaders(asyncSessionMaker, models=dbmodels) -> Loaders:
@@ -127,22 +127,22 @@ def createLoaders(asyncSessionMaker, models=dbmodels) -> Loaders:
         
         @property
         @cache
-        def plannedlessons(self):
+        def plan_lessons(self):
             return createIdLoader(asyncSessionMaker, PlannedLessonModel)
         
         @property
         @cache
-        def userplans(self):
+        def userplan_lessons(self):
             return createIdLoader(asyncSessionMaker, UserPlanModel)
         
         @property
         @cache
-        def groupplans(self):
+        def groupplan_lessons(self):
             return createIdLoader(asyncSessionMaker, GroupPlanModel)
         
         @property
         @cache
-        def facilityplans(self):
+        def facilityplan_lessons(self):
             return createIdLoader(asyncSessionMaker, FacilityPlanModel)
         
     return Loaders()
